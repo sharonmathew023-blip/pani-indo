@@ -3,141 +3,64 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pani Indo? 🛠️</title>
+<title>Pani Indo 🛠️</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-:root {
-    --bg:#fdfbf7;
-    --card:#fff;
-    --primary:#8b5e34;
-    --accent:#f2cc8f;
-}
-body {font-family:sans-serif;background:var(--bg);margin:0;padding:15px;}
-h1 {text-align:center;color:var(--primary);}
-.post-form, .card {
-    background:var(--card);
-    padding:20px;
-    border-radius:15px;
-    margin-bottom:15px;
-}
+body { font-family:sans-serif; padding:15px; background:#fdfbf7; }
+h1 { text-align:center; }
+
 input, select, button {
     width:100%;
-    padding:12px;
+    padding:10px;
     margin-top:8px;
     border-radius:10px;
-    border:1px solid #ddd;
 }
-button {
-    background:var(--primary);
-    color:white;
-    font-weight:bold;
-    border:none;
-}
-.tag {
-    font-size:12px;
-    background:#eee;
-    padding:4px 8px;
-    border-radius:8px;
-}
-.wa-link {
-    display:block;
-    background:#25D366;
-    color:white;
-    text-align:center;
-    padding:10px;
-    border-radius:10px;
+
+.card {
+    background:white;
+    padding:15px;
     margin-top:10px;
-    text-decoration:none;
+    border-radius:12px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>Pani Indo? 🛠️</h1>
+<h1>Pani Indo 🛠️</h1>
 
-<div class="post-form">
 <select id="category">
 <option value="Aale Venam">Aale Venam</option>
 <option value="Pani Venam">Pani Venam</option>
 </select>
 
 <input id="title" placeholder="Work (Eg: Catering)">
-<input id="location" placeholder="Area (Eg: Kazhakootam)">
-<input id="pincode" placeholder="PIN Code">
-<input id="wage" placeholder="Wage (Eg: 800/day)">
-<input id="phone" placeholder="WhatsApp Number">
+<input id="location" placeholder="Area">
+<input id="pincode" placeholder="Pincode">
+<input id="wage" placeholder="Wage">
+<input id="phone" placeholder="Phone">
 
 <button onclick="postPani()">Post</button>
-</div>
 
-<div>
-<input id="searchLocation" placeholder="Search by area">
+<br><br>
+
+<input id="searchLocation" placeholder="Search location">
 <button onclick="fetchPosts()">Search</button>
-</div>
 
 <div id="feed">Loading...</div>
 
 <script>
+// ✅ REAL VALUES ADDED
 const supabase = window.supabase.createClient(
-    "YOUR_SUPABASE_URL",
-    "YOUR_PUBLIC_ANON_KEY"
+  "https://kkxjvpilkhpuqsiucudg.supabase.co",
+  "sb_publishable_hcXBzTNq6UXM9GpIlN1BWg_-ahmb197"
 );
 
-function validate(data) {
-    if (!data.title || !data.phone) {
-        alert("Fill required fields");
-        return false;
-    }
-    if (!/^[0-9]{10}$/.test(data.phone)) {
-        alert("Invalid phone");
-        return false;
-    }
-    if (data.pincode && !/^[0-9]{6}$/.test(data.pincode)) {
-        alert("Invalid pincode");
-        return false;
-    }
-    return true;
-}
-
-function cooldownCheck() {
-    const last = localStorage.getItem("lastPost");
-    if (last && Date.now() - last < 60000) {
-        alert("Wait 1 min before posting again");
-        return false;
-    }
-    return true;
-}
-
-async function postPani() {
-    const data = {
-        category: category.value,
-        title: title.value,
-        location: location.value,
-        pincode: pincode.value,
-        wage: wage.value,
-        phone: phone.value
-    };
-
-    if (!validate(data) || !cooldownCheck()) return;
-
-    const { error } = await supabase.from("pani_posts").insert([data]);
-
-    if (error) {
-        alert("Error posting");
-        return;
-    }
-
-    localStorage.setItem("lastPost", Date.now());
-    alert("Posted ✅");
-
-    title.value="";
-    fetchPosts();
-}
-
+// 🔍 FETCH POSTS
 async function fetchPosts() {
+    const feed = document.getElementById("feed");
     feed.innerHTML = "Loading...";
 
     let query = supabase
@@ -145,20 +68,23 @@ async function fetchPosts() {
         .select("*")
         .order("created_at", { ascending:false });
 
-    const search = searchLocation.value;
+    const search = document.getElementById("searchLocation").value;
+
     if (search) {
         query = query.ilike("location", `%${search}%`);
     }
 
     const { data, error } = await query;
 
+    console.log("FETCH:", data, error);
+
     if (error) {
         feed.innerHTML = "Error loading";
         return;
     }
 
-    if (!data.length) {
-        feed.innerHTML = "No posts";
+    if (!data || data.length === 0) {
+        feed.innerHTML = "No posts yet";
         return;
     }
 
@@ -167,18 +93,59 @@ async function fetchPosts() {
     data.forEach(post => {
         feed.innerHTML += `
         <div class="card">
-            <span class="tag">${post.category}</span>
+            <b>${post.category}</b>
             <h3>${post.title}</h3>
-            <p>📍 ${post.location || "-"} (${post.pincode || "-"})</p>
-            <p>💰 ${post.wage || "-"}</p>
-            <a class="wa-link" href="https://wa.me/91${post.phone}" target="_blank">
-                WhatsApp
-            </a>
+            <p>${post.location || ""}</p>
+            <p>${post.wage || ""}</p>
+            <a href="https://wa.me/91${post.phone}" target="_blank">WhatsApp</a>
         </div>`;
     });
 }
 
+// 📤 POST DATA
+async function postPani() {
+
+    const data = {
+        category: document.getElementById("category").value,
+        title: document.getElementById("title").value,
+        location: document.getElementById("location").value,
+        pincode: document.getElementById("pincode").value,
+        wage: document.getElementById("wage").value,
+        phone: document.getElementById("phone").value
+    };
+
+    // validation
+    if (!data.title || !data.phone) {
+        alert("Fill required fields");
+        return;
+    }
+
+    if (!/^[0-9]{10}$/.test(data.phone)) {
+        alert("Invalid phone");
+        return;
+    }
+
+    const { error } = await supabase
+        .from("pani_posts")
+        .insert([data]);
+
+    console.log("INSERT:", error);
+
+    if (error) {
+        alert("Error posting");
+        return;
+    }
+
+    alert("Posted ✅");
+
+    document.getElementById("title").value = "";
+
+    fetchPosts();
+}
+
+// 🚀 LOAD ON START
 fetchPosts();
+
 </script>
 
 </body>

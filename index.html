@@ -1,66 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Pani Indo 🛠️</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-body { font-family:sans-serif; padding:15px; background:#fdfbf7; }
-h1 { text-align:center; }
 
-input, select, button {
-    width:100%;
-    padding:10px;
-    margin-top:8px;
-    border-radius:10px;
+*{
+    box-sizing:border-box;
 }
 
-.card {
-    background:white;
-    padding:15px;
+body{
+    margin:0;
+    padding:20px;
+    font-family:sans-serif;
+    background:#f5f5f5;
+}
+
+.container{
+    max-width:500px;
+    margin:auto;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+input,
+select,
+button{
+    width:100%;
+    padding:14px;
     margin-top:10px;
     border-radius:12px;
+    border:1px solid #ccc;
+    font-size:16px;
 }
+
+input,
+select{
+    background:white;
+}
+
+button{
+    background:black;
+    color:white;
+    border:none;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button:hover{
+    opacity:0.9;
+}
+
+.card{
+    background:white;
+    padding:16px;
+    margin-top:15px;
+    border-radius:16px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+.card h3{
+    margin:10px 0;
+}
+
+.card p{
+    margin:5px 0;
+}
+
+.card a{
+    display:inline-block;
+    margin-top:10px;
+    text-decoration:none;
+    color:green;
+    font-weight:bold;
+}
+
+#feed{
+    margin-top:20px;
+}
+
+.loading{
+    text-align:center;
+    margin-top:20px;
+}
+
 </style>
+
 </head>
 
 <body>
 
+<div class="container">
+
 <h1>Pani Indo 🛠️</h1>
 
 <select id="category">
-<option value="Aale Venam">Aale Venam</option>
-<option value="Pani Venam">Pani Venam</option>
+    <option value="Aale Venam">Aale Venam</option>
+    <option value="Pani Venam">Pani Venam</option>
 </select>
 
-<input id="title" placeholder="Work (Eg: Catering)">
-<input id="location" placeholder="Area">
-<input id="pincode" placeholder="Pincode">
-<input id="wage" placeholder="Wage">
-<input id="phone" placeholder="Phone">
+<input type="text" id="title" placeholder="Work (Eg: Catering)">
+<input type="text" id="location" placeholder="Area">
+<input type="text" id="pincode" placeholder="Pincode">
+<input type="text" id="wage" placeholder="Wage">
+<input type="tel" id="phone" placeholder="Phone Number">
 
 <button onclick="postPani()">Post</button>
 
 <br><br>
 
-<input id="searchLocation" placeholder="Search location">
+<input type="text" id="searchLocation" placeholder="Search location">
+
 <button onclick="fetchPosts()">Search</button>
 
-<div id="feed">Loading...</div>
+<div id="feed" class="loading">
+    Loading...
+</div>
+
+</div>
 
 <script>
-// ✅ REAL VALUES ADDED
+
+// SUPABASE CONNECTION
+
 const supabase = window.supabase.createClient(
-  "https://kkxjvpilkhpuqsiucudg.supabase.co",
-  "sb_publishable_hcXBzTNq6UXM9GpIlN1BWg_-ahmb197"
+  "https://kiboqjbbhssggooptyxh.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpYm9xamJiaHNzZ2dvb3B0eXhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4MTc0NTgsImV4cCI6MjA5NDM5MzQ1OH0.auZwe5CUKAJY8Cg2ZM3qXbhLDixA44fJRF0Nj4eIxKU"
 );
 
-// 🔍 FETCH POSTS
-async function fetchPosts() {
+
+// FETCH POSTS
+
+async function fetchPosts(){
+
     const feed = document.getElementById("feed");
+
     feed.innerHTML = "Loading...";
 
     let query = supabase
@@ -68,9 +151,12 @@ async function fetchPosts() {
         .select("*")
         .order("created_at", { ascending:false });
 
-    const search = document.getElementById("searchLocation").value;
+    const search = document
+        .getElementById("searchLocation")
+        .value
+        .trim();
 
-    if (search) {
+    if(search){
         query = query.ilike("location", `%${search}%`);
     }
 
@@ -78,75 +164,140 @@ async function fetchPosts() {
 
     console.log("FETCH:", data, error);
 
-    if (error) {
-        feed.innerHTML = "Error loading";
+    if(error){
+        feed.innerHTML = `
+        <p>Error loading posts ❌</p>
+        `;
         return;
     }
 
-    if (!data || data.length === 0) {
-        feed.innerHTML = "No posts yet";
+    if(!data || data.length === 0){
+        feed.innerHTML = `
+        <p>No posts yet 🌝</p>
+        `;
         return;
     }
 
     feed.innerHTML = "";
 
     data.forEach(post => {
+
         feed.innerHTML += `
+
         <div class="card">
-            <b>${post.category}</b>
-            <h3>${post.title}</h3>
-            <p>${post.location || ""}</p>
-            <p>${post.wage || ""}</p>
-            <a href="https://wa.me/91${post.phone}" target="_blank">WhatsApp</a>
-        </div>`;
+
+            <b>${post.category || ""}</b>
+
+            <h3>${post.title || ""}</h3>
+
+            <p>📍 ${post.location || "Unknown"}</p>
+
+            <p>📮 ${post.pincode || "N/A"}</p>
+
+            <p>💰 ${post.wage || "Not specified"}</p>
+
+            <a href="https://wa.me/91${post.phone}" target="_blank">
+                WhatsApp
+            </a>
+
+        </div>
+
+        `;
     });
 }
 
-// 📤 POST DATA
-async function postPani() {
+
+
+// POST DATA
+
+async function postPani(){
+
+    const button = document.querySelector("button");
 
     const data = {
-        category: document.getElementById("category").value,
-        title: document.getElementById("title").value,
-        location: document.getElementById("location").value,
-        pincode: document.getElementById("pincode").value,
-        wage: document.getElementById("wage").value,
-        phone: document.getElementById("phone").value
+
+        category:
+            document.getElementById("category").value,
+
+        title:
+            document.getElementById("title").value.trim(),
+
+        location:
+            document.getElementById("location").value.trim(),
+
+        pincode:
+            document.getElementById("pincode").value.trim(),
+
+        wage:
+            document.getElementById("wage").value.trim(),
+
+        phone:
+            document.getElementById("phone").value.trim()
     };
 
-    // validation
-    if (!data.title || !data.phone) {
+
+    // VALIDATION
+
+    if(!data.title || !data.phone){
+
         alert("Fill required fields");
+
         return;
     }
 
-    if (!/^[0-9]{10}$/.test(data.phone)) {
-        alert("Invalid phone");
+
+    if(!/^[0-9]{10}$/.test(data.phone)){
+
+        alert("Enter valid 10 digit phone number");
+
         return;
     }
+
+
+    button.innerText = "Posting...";
+
 
     const { error } = await supabase
         .from("pani_posts")
         .insert([data]);
 
+
     console.log("INSERT:", error);
 
-    if (error) {
-        alert("Error posting");
+
+    button.innerText = "Post";
+
+
+    if(error){
+
+        alert("Posting failed ❌");
+
         return;
     }
 
-    alert("Posted ✅");
+
+    alert("Posted Successfully ✅");
+
+
+    // CLEAR INPUTS
 
     document.getElementById("title").value = "";
+    document.getElementById("location").value = "";
+    document.getElementById("pincode").value = "";
+    document.getElementById("wage").value = "";
+    document.getElementById("phone").value = "";
+
 
     fetchPosts();
 }
 
-// 🚀 LOAD ON START
+
+
+// AUTO LOAD POSTS
+
 fetchPosts();
 
 </script>
 
 </body>
-</html>
+    </html>

@@ -1,202 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Pani Indo 🛠️</title>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
-body{
-    font-family:sans-serif;
-    background:#f5f5f5;
-    padding:20px;
+/* Universal centering from your screenshot */
+* {
+    text-align: center;
+    box-sizing: border-box;
 }
 
-.container{
-    max-width:500px;
-    margin:auto;
+body {
+    font-family: sans-serif;
+    background: #f5f5f5;
+    padding: 20px;
 }
 
-input,select,button{
-    width:100%;
-    padding:14px;
-    margin-top:10px;
-    border-radius:12px;
-    border:1px solid #ccc;
+.container {
+    max-width: 500px;
+    margin: auto;
 }
 
-button{
-    background:black;
-    color:white;
-    border:none;
+/* Inputs set to 80% width as requested */
+input, select, button {
+    width: 80%;
+    padding: 14px;
+    margin: 10px auto;
+    display: block; /* Centering block elements */
+    border-radius: 12px;
+    border: 1px solid #ccc;
 }
 
-.card{
-    background:white;
-    padding:15px;
-    margin-top:15px;
-    border-radius:14px;
+button {
+    background: black;
+    color: white;
+    border: none;
+    cursor: pointer;
 }
 
+.card {
+    background: white;
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 14px;
+    text-align: left; /* Keeps the actual post info readable */
+}
+
+.card h3, .card p, .card b {
+    text-align: left;
+}
 </style>
-
 </head>
 
 <body>
 
 <div class="container">
+    <h1>Pani Indo 🛠️</h1>
 
-<h1>Pani Indo 🛠️</h1>
+    <div id="postForm">
+        <select id="category">
+            <option value="Aale Venam">Aale Venam (Need Help)</option>
+            <option value="Pani Venam">Pani Venam (Need Work)</option>
+        </select>
+        <input id="title" placeholder="Work Title">
+        <input id="location" placeholder="Location">
+        <input id="pincode" type="number" placeholder="Pincode">
+        <input id="wage" type="number" placeholder="Wage">
+        <input id="phone" type="tel" placeholder="Phone Number">
+        <button onclick="postPani()">Post Now</button>
+    </div>
 
-<select id="category">
-<option value="Aale Venam">Aale Venam</option>
-<option value="Pani Venam">Pani Venam</option>
-</select>
+    <hr style="margin: 30px 0; border: 0; border-top: 1px solid #ccc;">
 
-<input id="title" placeholder="Work">
-<input id="location" placeholder="Location">
-<input id="pincode" placeholder="Pincode">
-<input id="wage" placeholder="Wage">
-<input id="phone" placeholder="Phone">
+    <input id="searchLocation" placeholder="Search by Location">
+    <button onclick="fetchPosts()">Search</button>
 
-<button onclick="postPani()">Post</button>
-
-<input id="searchLocation" placeholder="Search Location">
-
-<button onclick="fetchPosts()">Search</button>
-
-<div id="feed">
-Loading...
-</div>
-
+    <div id="feed">Loading...</div>
 </div>
 
 <script>
-
+// Supabase Config
 const supabase = window.supabase.createClient(
   "https://kiboqjbbhssggooptyxh.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpYm9xamJiaHNzZ2dvb3B0eXhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4MTc0NTgsImV4cCI6MjA5NDM5MzQ1OH0.auZwe5CUKAJY8Cg2ZM3qXbhLDixA44fJRF0Nj4eIxKU"
 );
 
-
-
-async function fetchPosts(){
-
+async function fetchPosts() {
     const feed = document.getElementById("feed");
-
-    feed.innerHTML = "Loading...";
+    feed.innerHTML = "Searching... 🔍";
 
     let query = supabase
         .from("pani_posts")
         .select("*")
-        .order("created_at", {ascending:false});
+        .order("created_at", { ascending: false });
 
-    const search =
-        document.getElementById("searchLocation")
-        .value
-        .trim();
-
-    if(search){
+    const search = document.getElementById("searchLocation").value.trim();
+    if (search) {
         query = query.ilike("location", `%${search}%`);
     }
 
-    const {data,error} = await query;
+    const { data, error } = await query;
 
-    console.log(data,error);
-
-    if(error){
-
-        feed.innerHTML = error.message;
-
+    if (error) {
+        feed.innerHTML = "Error: " + error.message;
         return;
     }
 
-    if(!data || data.length===0){
-
-        feed.innerHTML = "No posts yet";
-
+    if (!data || data.length === 0) {
+        feed.innerHTML = "No posts found. 🏜️";
         return;
     }
 
     feed.innerHTML = "";
-
-    data.forEach(post=>{
-
+    data.forEach(post => {
         feed.innerHTML += `
-
-        <div class="card">
-
-        <b>${post.category}</b>
-
-        <h3>${post.title}</h3>
-
-        <p>📍 ${post.location}</p>
-
-        <p>💰 ${post.wage}</p>
-
-        <a href="https://wa.me/91${post.phone}">
-        WhatsApp
-        </a>
-
-        </div>
-
+            <div class="card">
+                <b>${post.category}</b>
+                <h3>${post.title}</h3>
+                <p>📍 ${post.location}</p>
+                <p>💰 ₹${post.wage}</p>
+                <a href="https://wa.me/91${post.phone}" target="_blank" style="color: green; font-weight: bold;">WhatsApp Me</a>
+            </div>
         `;
     });
 }
 
-
-
-async function postPani(){
-
+async function postPani() {
     const data = {
-
-        category:
-            document.getElementById("category").value,
-
-        title:
-            document.getElementById("title").value,
-
-        location:
-            document.getElementById("location").value,
-
-        pincode:
-            document.getElementById("pincode").value,
-
-        wage:
-            document.getElementById("wage").value,
-
-        phone:
-            document.getElementById("phone").value
+        category: document.getElementById("category").value,
+        title: document.getElementById("title").value,
+        location: document.getElementById("location").value,
+        pincode: document.getElementById("pincode").value,
+        wage: document.getElementById("wage").value,
+        phone: document.getElementById("phone").value
     };
 
-
-    const {error} = await supabase
-        .from("pani_posts")
-        .insert([data]);
-
-    console.log(error);
-
-    if(error){
-
-        alert(error.message);
-
+    // Quick validation so you don't post empty stuff
+    if (!data.title || !data.phone) {
+        alert("Fill in the title and phone! ✋");
         return;
     }
 
-    alert("Posted ✅");
+    const { error } = await supabase.from("pani_posts").insert([data]);
 
-    fetchPosts();
+    if (error) {
+        alert("Post failed: " + error.message);
+        return;
+    }
+
+    alert("Posted successfully! 🚀");
+    fetchPosts(); // Refresh the feed
 }
 
-
+// Start the app
 fetchPosts();
-
 </script>
-
 </body>
-</html>
+    </html>
+

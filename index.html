@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="en">
+<html lang="ml">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f7f8f5">
+  <meta name="theme-color" content="#173f2b">
   <meta name="description" content="Find local work or people who can help. Post and discover jobs with Pani Indo.">
-  <title>Pani Indo | Local work, made easier</title>
+  <title>പണി ഇവിടെ | Pani Indo</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
@@ -94,54 +94,81 @@
       .panel-head { display: block; }
     }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+  
+@import url('https://fonts.googleapis.com/css2?family=Manjari:wght@400;700&family=Noto+Sans+Malayalam:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap');
+:root{--ink:#20372a;--muted:#6f796d;--line:#e6dfcf;--paper:#fffdf7;--wash:#f4f0e5;--green:#1e5939;--green-dark:#143f2a;--lime:#e8c66b;--shadow:0 18px 48px rgba(47,56,35,.09)}
+body{padding-top:24px;background:radial-gradient(ellipse at 5% 4%,rgba(232,198,107,.20),transparent 28rem),radial-gradient(ellipse at 96% 28%,rgba(30,89,57,.09),transparent 30rem),var(--wash);font-family:'DM Sans','Noto Sans Malayalam',sans-serif}
+.shell{width:min(100%,790px)}
+.hero{position:relative;overflow:hidden;padding:30px clamp(22px,5vw,42px) 34px;border-radius:26px;color:#fff9e9;background:linear-gradient(125deg,#123d29 0%,#1e5939 58%,#2c6846 100%);box-shadow:0 22px 50px rgba(20,63,42,.18)}
+.hero:before{content:"";position:absolute;width:260px;height:260px;right:-75px;top:-100px;border:1px solid rgba(238,211,139,.34);border-radius:50%;box-shadow:0 0 0 18px rgba(238,211,139,.045),0 0 0 38px rgba(238,211,139,.035)}
+.hero:after{content:"";position:absolute;right:26px;bottom:12px;width:120px;height:72px;opacity:.15;transform:rotate(-18deg);background:repeating-linear-gradient(145deg,transparent 0 9px,#f2d98e 10px 11px,transparent 12px 19px);clip-path:polygon(0 50%,100% 0,78% 100%)}
+.eyebrow{color:#f0d68e;letter-spacing:.04em;font-size:.78rem}.eyebrow:before{background:#e9c66d;box-shadow:0 0 0 4px rgba(233,198,109,.15)}
+h1{position:relative;z-index:1;display:flex;flex-direction:column;gap:4px;margin:18px 0 12px;letter-spacing:-.04em}
+.brand-malayalam{font-family:'Noto Sans Malayalam','Manjari',sans-serif;font-size:clamp(2.7rem,10vw,4.8rem);font-weight:800;line-height:1.35;color:#fff8e8}
+.brand-english{font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:800;letter-spacing:.28em;color:#edcf80}
+.hero p{position:relative;z-index:1;max-width:570px;color:rgba(255,249,233,.82);font-family:'Noto Sans Malayalam','DM Sans',sans-serif;font-size:1rem;line-height:1.9}
+.panel{border-color:#e7dfce;border-radius:20px;background:rgba(255,253,247,.94)}
+h2{font-family:'Noto Sans Malayalam','DM Sans',sans-serif;font-size:1.18rem}
+.hint,label{font-family:'Noto Sans Malayalam','DM Sans',sans-serif}
+label{color:#425646;line-height:1.65}
+input,select{background:#fffefa;border-color:#e5dfd1;border-radius:11px;font-family:'Noto Sans Malayalam','DM Sans',sans-serif}
+input:focus,select:focus{border-color:#a17c34;box-shadow:0 0 0 3px rgba(210,174,91,.18)}
+.btn{background:#1e5939;border-radius:11px;font-family:'Noto Sans Malayalam','DM Sans',sans-serif}.btn:hover{background:#143f2a}
+.tag{background:#edf1df;color:#28543a}.job-card{border-color:#e8e0d0;background:#fffefa}
+.job-card h3{font-family:'Noto Sans Malayalam','DM Sans',sans-serif;line-height:1.55}
+.wa-link{color:#1e7047}
+.footer{display:flex;flex-direction:column;gap:6px;color:#596a58;font-family:'Noto Sans Malayalam',sans-serif;line-height:1.8}
+.footer small{font:800 .65rem 'DM Sans',sans-serif;letter-spacing:.2em;color:#a17c34}
+@media(max-width:560px){.hero{padding:26px 22px 30px;border-radius:21px}.brand-malayalam{font-size:clamp(2.5rem,12vw,3.5rem)}.hero p{font-size:.94rem}}
+
   </style>
 </head>
 <body>
   <main class="shell">
     <header class="hero">
-      <span class="eyebrow">Local work, made easier</span>
-      <h1>Pani Indo <span aria-hidden="true">🛠️</span></h1>
-      <p>Need a helping hand, or looking for your next job? Post what you need and connect with people nearby.</p>
+      <span class="eyebrow">നമ്മുടെ നാട്ടിലെ ജോലി കൂട്ടായ്മ · LOCAL WORK, LOCAL PEOPLE</span>
+      <h1><span class="brand-malayalam">പണി ഇവിടെ</span><span class="brand-english">PANI INDO</span></h1>
+      <p>നാട്ടിൽ പണിയുണ്ടോ? പണിക്കാരെ വേണോ? അടുത്തുള്ള ആളുകളെ കണ്ടെത്താം. ജോലി പങ്കുവെക്കാം, അവസരങ്ങൾ കൈമാറാം.</p>
     </header>
 
     <section class="panel" aria-labelledby="post-heading">
       <div class="panel-head">
         <div>
-          <h2 id="post-heading">Create a post</h2>
-          <p class="hint">Share the details so the right people can reach you.</p>
+          <h2 id="post-heading">ഒരു കാര്യം പോസ്റ്റ് ചെയ്യാം</h2>
+          <p class="hint">നിങ്ങളുടെ ആവശ്യം നാട്ടുകാരിലേക്ക് എത്തിക്കൂ.</p>
         </div>
       </div>
       <form id="postForm">
         <div class="form-grid">
           <div class="field full">
-            <label for="category">I want to</label>
+            <label for="category">നിങ്ങൾക്ക് എന്താണ് വേണ്ടത്? · I WANT TO</label>
             <select id="category" name="category" required>
-              <option value="Aale Venam">Hire someone (Aale Venam)</option>
-              <option value="Pani Venam">Find work (Pani Venam)</option>
+              <option value="Aale Venam">ആളെ വേണം · Aale Venam</option>
+              <option value="Pani Venam">പണി വേണം · Pani Venam</option>
             </select>
           </div>
           <div class="field full">
-            <label for="title">Work title</label>
-            <input id="title" name="title" maxlength="120" placeholder="e.g. Need a painter for a house" required>
+            <label for="title">എന്ത് ജോലിയാണ്? · WORK DETAILS</label>
+            <input id="title" name="title" maxlength="120" placeholder="ഉദാ: വീട് പെയിന്റ് ചെയ്യാൻ ആളെ വേണം" required>
           </div>
           <div class="field">
-            <label for="location">Location</label>
-            <input id="location" name="location" maxlength="100" placeholder="Your area" required>
+            <label for="location">സ്ഥലം · LOCATION</label>
+            <input id="location" name="location" maxlength="100" placeholder="നിങ്ങളുടെ നാട് / സ്ഥലം" required>
           </div>
           <div class="field">
-            <label for="pincode">PIN code</label>
-            <input id="pincode" name="pincode" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="6-digit PIN code">
+            <label for="pincode">പിൻകോഡ് · PIN CODE</label>
+            <input id="pincode" name="pincode" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="6 അക്ക പിൻകോഡ്">
           </div>
           <div class="field">
-            <label for="wage">Wage (₹)</label>
-            <input id="wage" name="wage" type="number" min="0" step="1" placeholder="e.g. 800">
+            <label for="wage">കൂലി (₹) · WAGE</label>
+            <input id="wage" name="wage" type="number" min="0" step="1" placeholder="ഉദാ: 800">
           </div>
           <div class="field">
-            <label for="phone">Phone number</label>
-            <input id="phone" name="phone" type="tel" inputmode="tel" maxlength="16" placeholder="10-digit mobile number" required>
+            <label for="phone">ഫോൺ നമ്പർ · PHONE</label>
+            <input id="phone" name="phone" type="tel" inputmode="tel" maxlength="16" placeholder="10 അക്ക മൊബൈൽ നമ്പർ" required>
           </div>
         </div>
-        <button class="btn full" id="postButton" type="submit">Post now</button>
+        <button class="btn full" id="postButton" type="submit">പോസ്റ്റ് ചെയ്യാം · POST NOW</button>
         <p class="status" id="formStatus" role="status" aria-live="polite"></p>
       </form>
     </section>
@@ -149,18 +176,18 @@
     <section class="panel" aria-labelledby="feed-heading">
       <div class="panel-head">
         <div>
-          <h2 id="feed-heading">Find work near you</h2>
-          <p class="hint">Browse recent posts or filter by location.</p>
+          <h2 id="feed-heading">നാട്ടിലെ ജോലികൾ</h2>
+          <p class="hint">അടുത്തുള്ള ജോലികളും അവസരങ്ങളും കണ്ടെത്തൂ.</p>
         </div>
       </div>
       <form id="searchForm" class="search-row">
-        <input id="searchLocation" aria-label="Search by location" maxlength="100" placeholder="Search by location">
-        <button class="btn" type="submit">Search</button>
+        <input id="searchLocation" aria-label="സ്ഥലം തിരയുക · Search by location" maxlength="100" placeholder="നാട് / സ്ഥലം തിരയൂ...">
+        <button class="btn" type="submit">തിരയാം · SEARCH</button>
       </form>
       <p class="status" id="feedStatus" role="status" aria-live="polite">Loading posts…</p>
       <div class="feed" id="feed"></div>
     </section>
-    <footer class="footer">Pani Indo · Connecting local people and local work</footer>
+    <footer class="footer"><span>നമ്മുടെ നാട്. നമ്മുടെ ജോലി. നമ്മുടെ ആളുകൾ.</span><small>PANI INDO · MADE FOR KERALA</small></footer>
   </main>
 
   <script>

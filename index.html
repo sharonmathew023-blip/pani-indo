@@ -1,163 +1,331 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pani Indo 🛠️</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<style>
-/* Universal centering from your screenshot */
-* {
-    text-align: center;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: sans-serif;
-    background: #f5f5f5;
-    padding: 20px;
-}
-
-.container {
-    max-width: 500px;
-    margin: auto;
-}
-
-/* Inputs set to 80% width as requested */
-input, select, button {
-    width: 80%;
-    padding: 14px;
-    margin: 10px auto;
-    display: block; /* Centering block elements */
-    border-radius: 12px;
-    border: 1px solid #ccc;
-}
-
-button {
-    background: black;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-.card {
-    background: white;
-    padding: 15px;
-    margin-top: 15px;
-    border-radius: 14px;
-    text-align: left; /* Keeps the actual post info readable */
-}
-
-.card h3, .card p, .card b {
-    text-align: left;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8f5">
+  <meta name="description" content="Find local work or people who can help. Post and discover jobs with Pani Indo.">
+  <title>Pani Indo | Local work, made easier</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17211b;
+      --muted: #667168;
+      --line: #e3e9e2;
+      --paper: #ffffff;
+      --wash: #f5f7f2;
+      --green: #246b45;
+      --green-dark: #174b30;
+      --lime: #d9f36a;
+      --shadow: 0 12px 34px rgba(27, 48, 34, .07);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 32px 16px 56px;
+      background: var(--wash);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    button, input, select { font: inherit; }
+    .shell { width: min(100%, 760px); margin: 0 auto; }
+    .hero { padding: 22px 4px 26px; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--green); font-size: .76rem; font-weight: 800;
+      letter-spacing: .13em; text-transform: uppercase;
+    }
+    .eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+    h1 { margin: 12px 0 8px; font-size: clamp(2.1rem, 7vw, 3.4rem); line-height: 1; letter-spacing: -.065em; }
+    .hero p { max-width: 520px; margin: 0; color: var(--muted); line-height: 1.65; }
+    .panel {
+      padding: clamp(18px, 4vw, 28px); margin: 18px 0;
+      background: var(--paper); border: 1px solid var(--line);
+      border-radius: 22px; box-shadow: var(--shadow);
+    }
+    .panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+    h2 { margin: 0; font-size: 1.2rem; letter-spacing: -.03em; }
+    .hint { margin: 6px 0 0; color: var(--muted); font-size: .9rem; line-height: 1.5; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .field { min-width: 0; }
+    .field.full { grid-column: 1 / -1; }
+    label { display: block; margin: 0 0 7px; color: #465249; font-size: .82rem; font-weight: 700; }
+    input, select {
+      width: 100%; min-height: 48px; padding: 12px 14px;
+      color: var(--ink); background: #fbfcfa;
+      border: 1px solid var(--line); border-radius: 12px; outline: none;
+      transition: border-color .18s, box-shadow .18s;
+    }
+    input:focus, select:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(36,107,69,.12); }
+    input::placeholder { color: #9aa39b; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-height: 48px; padding: 12px 18px; border: 0; border-radius: 12px;
+      background: var(--green); color: white; font-weight: 800; cursor: pointer;
+      transition: background .18s, transform .18s;
+    }
+    .btn:hover { background: var(--green-dark); }
+    .btn:active { transform: translateY(1px); }
+    .btn:disabled { opacity: .6; cursor: wait; }
+    .btn.full { width: 100%; margin-top: 16px; }
+    .search-row { display: flex; gap: 10px; }
+    .search-row input { flex: 1; min-width: 0; }
+    .status { margin: 14px 0 0; color: var(--muted); font-size: .9rem; line-height: 1.5; }
+    .status.error { color: #b42318; }
+    .feed { display: grid; gap: 12px; margin-top: 18px; }
+    .job-card { padding: 18px; background: var(--paper); border: 1px solid var(--line); border-radius: 16px; }
+    .job-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .tag { display: inline-block; padding: 6px 9px; border-radius: 999px; background: #edf5e9; color: var(--green-dark); font-size: .72rem; font-weight: 800; }
+    .job-card h3 { margin: 12px 0 8px; font-size: 1.08rem; letter-spacing: -.02em; overflow-wrap: anywhere; }
+    .job-meta { display: flex; flex-wrap: wrap; gap: 8px 16px; color: var(--muted); font-size: .88rem; }
+    .job-actions { margin-top: 16px; }
+    .wa-link { color: var(--green); font-weight: 800; text-decoration: none; }
+    .wa-link:hover { text-decoration: underline; }
+    .empty { padding: 28px 16px; text-align: center; color: var(--muted); background: var(--paper); border: 1px dashed #cfd8ce; border-radius: 16px; }
+    .footer { padding: 18px 4px 0; color: #89928a; font-size: .78rem; text-align: center; }
+    @media (max-width: 560px) {
+      body { padding: 18px 12px 40px; }
+      .form-grid { grid-template-columns: 1fr; gap: 12px; }
+      .field.full { grid-column: auto; }
+      .search-row { flex-direction: column; }
+      .search-row .btn { width: 100%; }
+      .panel-head { display: block; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
+  </style>
 </head>
-
 <body>
+  <main class="shell">
+    <header class="hero">
+      <span class="eyebrow">Local work, made easier</span>
+      <h1>Pani Indo <span aria-hidden="true">🛠️</span></h1>
+      <p>Need a helping hand, or looking for your next job? Post what you need and connect with people nearby.</p>
+    </header>
 
-<div class="container">
-    <h1>Pani Indo 🛠️</h1>
+    <section class="panel" aria-labelledby="post-heading">
+      <div class="panel-head">
+        <div>
+          <h2 id="post-heading">Create a post</h2>
+          <p class="hint">Share the details so the right people can reach you.</p>
+        </div>
+      </div>
+      <form id="postForm">
+        <div class="form-grid">
+          <div class="field full">
+            <label for="category">I want to</label>
+            <select id="category" name="category" required>
+              <option value="Aale Venam">Hire someone (Aale Venam)</option>
+              <option value="Pani Venam">Find work (Pani Venam)</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label for="title">Work title</label>
+            <input id="title" name="title" maxlength="120" placeholder="e.g. Need a painter for a house" required>
+          </div>
+          <div class="field">
+            <label for="location">Location</label>
+            <input id="location" name="location" maxlength="100" placeholder="Your area" required>
+          </div>
+          <div class="field">
+            <label for="pincode">PIN code</label>
+            <input id="pincode" name="pincode" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="6-digit PIN code">
+          </div>
+          <div class="field">
+            <label for="wage">Wage (₹)</label>
+            <input id="wage" name="wage" type="number" min="0" step="1" placeholder="e.g. 800">
+          </div>
+          <div class="field">
+            <label for="phone">Phone number</label>
+            <input id="phone" name="phone" type="tel" inputmode="tel" maxlength="16" placeholder="10-digit mobile number" required>
+          </div>
+        </div>
+        <button class="btn full" id="postButton" type="submit">Post now</button>
+        <p class="status" id="formStatus" role="status" aria-live="polite"></p>
+      </form>
+    </section>
 
-    <div id="postForm">
-        <select id="category">
-            <option value="Aale Venam">Aale Venam (Need Help)</option>
-            <option value="Pani Venam">Pani Venam (Need Work)</option>
-        </select>
-        <input id="title" placeholder="Work Title">
-        <input id="location" placeholder="Location">
-        <input id="pincode" type="number" placeholder="Pincode">
-        <input id="wage" type="number" placeholder="Wage">
-        <input id="phone" type="tel" placeholder="Phone Number">
-        <button onclick="postPani()">Post Now</button>
-    </div>
+    <section class="panel" aria-labelledby="feed-heading">
+      <div class="panel-head">
+        <div>
+          <h2 id="feed-heading">Find work near you</h2>
+          <p class="hint">Browse recent posts or filter by location.</p>
+        </div>
+      </div>
+      <form id="searchForm" class="search-row">
+        <input id="searchLocation" aria-label="Search by location" maxlength="100" placeholder="Search by location">
+        <button class="btn" type="submit">Search</button>
+      </form>
+      <p class="status" id="feedStatus" role="status" aria-live="polite">Loading posts…</p>
+      <div class="feed" id="feed"></div>
+    </section>
+    <footer class="footer">Pani Indo · Connecting local people and local work</footer>
+  </main>
 
-    <hr style="margin: 30px 0; border: 0; border-top: 1px solid #ccc;">
+  <script>
+    const SUPABASE_URL = "https://kiboqjbbhssggooptyxh.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpYm9xamJiaHNzZ2dvb3B0eXhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4MTc0NTgsImV4cCI6MjA5NDM5MzQ1OH0.auZwe5CUKAJY8Cg2ZM3qXbhLDixA44fJRF0Nj4eIxKU";
+    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    <input id="searchLocation" placeholder="Search by Location">
-    <button onclick="fetchPosts()">Search</button>
-
-    <div id="feed">Loading...</div>
-</div>
-
-<script>
-// Supabase Config
-const supabase = window.supabase.createClient(
-  "https://kiboqjbbhssggooptyxh.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpYm9xamJiaHNzZ2dvb3B0eXhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4MTc0NTgsImV4cCI6MjA5NDM5MzQ1OH0.auZwe5CUKAJY8Cg2ZM3qXbhLDixA44fJRF0Nj4eIxKU"
-);
-
-async function fetchPosts() {
     const feed = document.getElementById("feed");
-    feed.innerHTML = "Searching... 🔍";
+    const feedStatus = document.getElementById("feedStatus");
+    const formStatus = document.getElementById("formStatus");
+    const postButton = document.getElementById("postButton");
 
-    let query = supabase
-        .from("pani_posts")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-    const search = document.getElementById("searchLocation").value.trim();
-    if (search) {
-        query = query.ilike("location", `%${search}%`);
+    function setStatus(element, message, isError = false) {
+      element.textContent = message;
+      element.classList.toggle("error", isError);
     }
 
-    const { data, error } = await query;
+    function cleanPhone(value) {
+      return String(value || "").replace(/\D/g, "");
+    }
 
-    if (error) {
-        feed.innerHTML = "Error: " + error.message;
+    function whatsappNumber(value) {
+      const digits = cleanPhone(value);
+      if (digits.length === 10) return "91" + digits;
+      if (digits.length === 12 && digits.startsWith("91")) return digits;
+      return null;
+    }
+
+    function addText(parent, tag, value, className) {
+      const element = document.createElement(tag);
+      if (className) element.className = className;
+      element.textContent = value == null || value === "" ? "Not provided" : String(value);
+      parent.appendChild(element);
+      return element;
+    }
+
+    function renderPosts(posts) {
+      feed.replaceChildren();
+      if (!posts || posts.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "No posts found. Try another location.";
+        feed.appendChild(empty);
         return;
+      }
+
+      for (const post of posts) {
+        const card = document.createElement("article");
+        card.className = "job-card";
+
+        const top = document.createElement("div");
+        top.className = "job-top";
+        const category = document.createElement("span");
+        category.className = "tag";
+        category.textContent = post.category || "Community post";
+        top.appendChild(category);
+        card.appendChild(top);
+
+        addText(card, "h3", post.title || "Untitled post");
+        const meta = document.createElement("div");
+        meta.className = "job-meta";
+        const location = document.createElement("span");
+        location.textContent = "📍 " + (post.location || "Location not provided");
+        meta.appendChild(location);
+        const wage = document.createElement("span");
+        wage.textContent = post.wage !== null && post.wage !== undefined && post.wage !== ""
+          ? "₹ " + post.wage : "Wage not specified";
+        meta.appendChild(wage);
+        if (post.pincode) {
+          const pin = document.createElement("span");
+          pin.textContent = "PIN " + post.pincode;
+          meta.appendChild(pin);
+        }
+        card.appendChild(meta);
+
+        const number = whatsappNumber(post.phone);
+        if (number) {
+          const actions = document.createElement("div");
+          actions.className = "job-actions";
+          const link = document.createElement("a");
+          link.className = "wa-link";
+          link.href = "https://wa.me/" + number;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.textContent = "Contact on WhatsApp";
+          actions.appendChild(link);
+          card.appendChild(actions);
+        }
+        feed.appendChild(card);
+      }
     }
 
-    if (!data || data.length === 0) {
-        feed.innerHTML = "No posts found. 🏜️";
-        return;
+    async function fetchPosts() {
+      setStatus(feedStatus, "Loading posts…");
+      feed.replaceChildren();
+      try {
+        let query = client.from("pani_posts").select("category,title,location,pincode,wage,phone,created_at")
+          .order("created_at", { ascending: false }).limit(100);
+        const search = document.getElementById("searchLocation").value.trim();
+        if (search) query = query.ilike("location", "%" + search.replace(/[%_,]/g, " ") + "%");
+
+        const { data, error } = await query;
+        if (error) throw error;
+        renderPosts(data);
+        setStatus(feedStatus, data.length ? data.length + " recent post(s)" : "No matching posts.");
+      } catch (error) {
+        console.error("Could not load posts:", error);
+        setStatus(feedStatus, "Could not load posts. Please try again in a moment.", true);
+      }
     }
 
-    feed.innerHTML = "";
-    data.forEach(post => {
-        feed.innerHTML += `
-            <div class="card">
-                <b>${post.category}</b>
-                <h3>${post.title}</h3>
-                <p>📍 ${post.location}</p>
-                <p>💰 ₹${post.wage}</p>
-                <a href="https://wa.me/91${post.phone}" target="_blank" style="color: green; font-weight: bold;">WhatsApp Me</a>
-            </div>
-        `;
-    });
-}
+    document.getElementById("postForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      formStatus.classList.remove("error");
 
-async function postPani() {
-    const data = {
+      const data = {
         category: document.getElementById("category").value,
-        title: document.getElementById("title").value,
-        location: document.getElementById("location").value,
-        pincode: document.getElementById("pincode").value,
+        title: document.getElementById("title").value.trim(),
+        location: document.getElementById("location").value.trim(),
+        pincode: document.getElementById("pincode").value.trim(),
         wage: document.getElementById("wage").value,
-        phone: document.getElementById("phone").value
-    };
+        phone: cleanPhone(document.getElementById("phone").value)
+      };
 
-    // Quick validation so you don't post empty stuff
-    if (!data.title || !data.phone) {
-        alert("Fill in the title and phone! ✋");
+      if (!data.title || !data.location) {
+        setStatus(formStatus, "Add a work title and location.", true);
         return;
-    }
-
-    const { error } = await supabase.from("pani_posts").insert([data]);
-
-    if (error) {
-        alert("Post failed: " + error.message);
+      }
+      if (data.pincode && !/^\d{6}$/.test(data.pincode)) {
+        setStatus(formStatus, "Enter a valid 6-digit PIN code.", true);
         return;
-    }
+      }
+      if (![10, 12].includes(data.phone.length) || (data.phone.length === 12 && !data.phone.startsWith("91"))) {
+        setStatus(formStatus, "Enter a valid 10-digit Indian mobile number, with or without +91.", true);
+        return;
+      }
+      if (data.wage !== "" && (!Number.isFinite(Number(data.wage)) || Number(data.wage) < 0)) {
+        setStatus(formStatus, "Enter a valid wage amount.", true);
+        return;
+      }
 
-    alert("Posted successfully! 🚀");
-    fetchPosts(); // Refresh the feed
-}
+      postButton.disabled = true;
+      postButton.textContent = "Posting…";
+      setStatus(formStatus, "Submitting your post…");
+      try {
+        const { error } = await client.from("pani_posts").insert([data]);
+        if (error) throw error;
+        event.target.reset();
+        setStatus(formStatus, "Your post was published.");
+        await fetchPosts();
+      } catch (error) {
+        console.error("Could not publish post:", error);
+        setStatus(formStatus, "Post failed. Check your connection and try again.", true);
+      } finally {
+        postButton.disabled = false;
+        postButton.textContent = "Post now";
+      }
+    });
 
-// Start the app
-fetchPosts();
-</script>
+    document.getElementById("searchForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      fetchPosts();
+    });
+
+    fetchPosts();
+  </script>
 </body>
-    </html>
-
+</html>
